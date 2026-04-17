@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseDeck</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #1c2544 0%, #0a0a0f 55%, #05070c 100%);
+      color: white;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 92%;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 30px 0 40px;
+    }
+
+    .app-title {
+      text-align: center;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .app-subtitle {
+      text-align: center;
+      color: #a7b1c7;
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    .deck {
+      background: linear-gradient(180deg, rgba(28, 37, 68, 0.96), rgba(12, 18, 34, 0.96));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+    }
+
+    .deck-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .deck h3 {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .ready {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3cff85;
+      letter-spacing: 0.5px;
+    }
+
+    .track-status {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: #d5ddf0;
+      border-radius: 14px;
+      padding: 15px 16px;
+      font-size: 15px;
+      margin-bottom: 16px;
+      word-break: break-word;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.97;
+    }
+
+    .load-btn {
+      background: linear-gradient(90deg, #65a8ff, #4f7cff);
+      color: white;
+      box-shadow: 0 6px 18px rgba(79,124,255,0.35);
+    }
+
+    .play-btn {
+      background: linear-gradient(90deg, #7c4dff, #aa5cff);
+      color: white;
+      box-shadow: 0 6px 18px rgba(124,77,255,0.35);
+    }
+
+    .unload-btn {
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .audio-wrap {
+      margin-top: 6px;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 6px;
+      border-radius: 10px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #8d96aa;
+      font-size: 14px;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="app-title">PulseDeck</div>
+    <div class="app-subtitle">Premium DJ control, simplified.</div>
+
+    <div class="deck" id="deckA">
+      <div class="deck-top">
+        <h3>Deck A</h3>
+        <div class="top-controls">
+  <div class="volume-control">
+    <label>Volume A</label>
+    <input type="range" min="0" max="1" step="0.01" value="1"
+    oninput="setVolume('A', this.value)">
+  </div>
+
+  <div class="ready">READY</div>
+</div>
+      </div>
+
+      <div class="track-status">No track loaded</div>
+<div class="crossfader">
+  <label>Crossfader</label>
+  <input type="range" min="0" max="1" step="0.01" value="0.5"
+         oninput="setCrossfader(this.value)">
+</div>
+
+      <div class="controls">
+        <button class="load-btn" onclick="loadDeck('A')">Load</button>
+        <button class="play-btn" onclick="togglePlay('A')">Play / Pause</button>
+        <button class="unload-btn" onclick="unloadDeck('A')">Unload</button>
+      </div>
+
+      <div class="audio-wrap"></div>
+    </div>
+
+    <div class="deck" id="deckB">
+      <div class="deck-top">
+  <h3>Deck B</h3>
+
+  <div class="top-controls">
+    <div class="volume-control">
+  <label>Volume B</label>
+  <input type="range" min="0" max="1" step="0.01" value="1"
+  oninput="setVolume('B', this.value)">
+</div>
+
+    <div class="ready">READY</div>
+  </div>
+  </div>
+
+      <div class="track-status">No track loaded</div>
+
+      <div class="controls">
+        <button class="load-btn" onclick="loadDeck('B')">Load</button>
+        <button class="play-btn" onclick="togglePlay('B')">Play / Pause</button>
+        <button class="unload-btn" onclick="unloadDeck('B')">Unload</button>
+      </div>
+
+      <div class="audio-wrap"></div>
+    </div>
+
+    <div class="footer-note">
+      Load audio files from your device. Files are not uploaded anywhere.
+    </div>
+  </div>
+
+  <script>
+    const decks = {
+      A: { audio: null, url: null },
+      B: { audio: null, url: null }
+    };
+
+    function getDeckBox(deck) {
+      return document.getElementById(deck === "A" ? "deckA" : "deckB");
+    }
+
+    function loadDeck(deck) {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "audio/*";
+
+      input.onchange = function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        unloadDeck(deck);
+
+        const box = getDeckBox(deck);
+        const status = box.querySelector(".track-status");
+        const audioWrap = box.querySelector(".audio-wrap");
+
+        const url = URL.createObjectURL(file);
+        const audio = document.createElement("audio");
+        audio.controls = true;
+        audio.src = url;
+
+        decks[deck].audio = audio;
+        decks[deck].url = url;
+
+        status.textContent = file.name;
+        audioWrap.innerHTML = "";
+        audioWrap.appendChild(audio);
+      };
+
+      input.click();
+    }
+
+    function togglePlay(deck) {
+      const audio = decks[deck].audio;
+      if (!audio) return;
+
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function unloadDeck(deck) {
+      const box = getDeckBox(deck);
+      const status = box.querySelector(".track-status");
+      const audioWrap = box.querySelector(".audio-wrap");
+
+      if (decks[deck].audio) {
+        decks[deck].audio.pause();
+      }
+
+      if (decks[deck].url) {
+        URL.revokeObjectURL(decks[deck].url);
+      }
+
+      decks[deck].audio = null;
+      decks[deck].url = null;
+
+      status.textContent = "No track loaded";
+      audioWrap.innerHTML = "";
+    }
+  </script>
+</body>
+  <html lang="en">
+<head>
+
+<style>
+.volume-control {
+  margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- YOUR APP UI HERE -->
+
+<script>
+function setCrossfader(value) {
+ const v = parseFloat(value);
+
+const aVol = (1 - v);
+const bVol = v; 
+
+  if (decks.A.audio) {
+    decks.A.audio.volume = aVol;
+  }
+
+  if (decks.B.audio) {
+    decks.B.audio.volume = bVol;
+  }
+}
+// your existing code (loadDeck, play, etc)
+
+function setVolume(deck, value) {
+  if (!decks[deck].audio) return;
+
+  const cross = document.querySelector('.crossfader input').value;
+  const crossVal = parseFloat(cross);
+  const vol = parseFloat(value);
+
+  let finalVolume;
+
+  if (deck === 'A') {
+    finalVolume = vol * (1 - crossVal);
+  } else {
+    finalVolume = vol * crossVal;
+  }
+
+  decks[deck].audio.volume = finalVolume;
+}
+
+</script>
+</body>
+</html>
